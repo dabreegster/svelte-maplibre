@@ -35,6 +35,7 @@
     { href: '/examples/raster_source', title: `Raster Source` },
     { href: '/examples/image_source', title: `Image Source` },
     { href: '/examples/cooperative_gestures', title: `Cooperative Gestures` },
+    { href: '/examples/dynamically_add', title: `Dynamically add sources and layers` },
   ];
 
   // Examples which don't really warrant showing on the docs site, but ensure that
