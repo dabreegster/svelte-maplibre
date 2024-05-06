@@ -1,5 +1,5 @@
 <script lang="ts">
-  import maplibre, { type LngLatLike, type PointLike } from 'maplibre-gl';
+  import maplibre, { type LngLatLike, type PointLike, type PositionAnchor } from 'maplibre-gl';
   import { createEventDispatcher } from 'svelte';
   import { updatedMarkerContext } from './context';
   import type { MarkerClickInfo } from './types';
@@ -16,6 +16,7 @@
   /** Make markers tabbable and add the button role. */
   export let asButton = false;
   export let draggable = false;
+  export let anchor: PositionAnchor = 'center';
   /** A GeoJSON Feature related to the point. This is only actually used to send an ID and set of properties along with
    * the event, and can be safely omitted. The `lngLat` prop controls the marker's location even if this is provided. */
   export let feature: GeoJSON.Feature | null = null;
@@ -48,6 +49,7 @@
       draggable,
       offset,
       opacity: opacity.toString(),
+      anchor,
     })
       .setLngLat(lngLat)
       .addTo($map!);
