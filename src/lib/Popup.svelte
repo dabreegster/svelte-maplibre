@@ -31,6 +31,8 @@
     openOn?: 'hover' | 'click' | 'dblclick' | 'contextmenu' | 'manual';
     /** Only open the popup if there's no feature from a higher layer covering this one. */
     openIfTopMost?: boolean;
+    /** Only open the popup if this evaluates to true for the features. */
+    canOpen?: (features: Array<DATA>) => boolean;
     focusAfterOpen?: boolean;
     anchor?: maplibregl.PositionAnchor;
     offset?: maplibregl.Offset;
@@ -66,6 +68,7 @@
     closeOnMove = false,
     openOn = 'click',
     openIfTopMost = true,
+    canOpen = undefined,
     focusAfterOpen = true,
     anchor = undefined,
     offset = undefined,
@@ -207,6 +210,10 @@
 
     handleLayerEvent(e);
 
+    if (canOpen && !canOpen(features ?? [])) {
+      return;
+    }
+
     // Wait a tick in case closeOnClick is set. Then the map will close the popup and we'll reopen it
     // just after.
     setTimeout(() => (open = true));
@@ -232,6 +239,10 @@
         // Pretend we just opened again to avoid the click handler closing the popup.
         touchOpenState = 'justOpened';
       } else {
+        if (canOpen && !canOpen(features)) {
+          return;
+        }
+
         touchOpenState = 'opening';
         open = true;
       }
@@ -258,8 +269,13 @@
       return;
     }
 
-    open = true;
     features = (e.features ?? []) as DATA[];
+
+    if (canOpen && !canOpen(features)) {
+      return;
+    }
+
+    open = true;
     lngLat = e.lngLat;
   }
 
