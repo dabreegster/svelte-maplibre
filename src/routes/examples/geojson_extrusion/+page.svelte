@@ -7,12 +7,23 @@
   import cbsa from '$site/cbsa.json';
   import FillExtrusionLayer from '$lib/FillExtrusionLayer.svelte';
   import Popup from '$lib/Popup.svelte';
+
+	let onlySomePopups = false;
+  function canOpen(features: Array<Feature>): boolean {
+    return !onlySomePopups || features[0]?.properties?.NAME[0] <= 'M';
+  }
 </script>
 
 <p>
   Map of US Metropolitan Areas. Height indicates total population and color indicates population
   density.
 </p>
+
+<label>
+  <input type="checkbox" bind:checked={onlySomePopups} />
+  Only show popups when the area name starts with a letter from "A" to "M"
+</label>
+
 <MapLibre
   style="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
   class={mapClasses}
@@ -40,7 +51,7 @@
       }}
       beforeLayerType="symbol"
     >
-      <Popup openOn="hover" let:data>
+      <Popup openOn="hover" let:data {canOpen}>
         {@const props = data?.properties}
         {#if props}
           <div class="flex flex-col gap-2">

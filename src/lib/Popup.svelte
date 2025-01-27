@@ -33,6 +33,8 @@
   export let openOn: 'hover' | 'click' | 'dblclick' | 'contextmenu' | 'manual' = 'click';
   /** Only open the popup if there's no feature from a higher layer covering this one. */
   export let openIfTopMost = true;
+  /** Only open the popup if this evaluates to true for the features. */
+  export let canOpen: ((features: Array<DATA>) => boolean) | undefined = undefined;
 
   export let focusAfterOpen = true;
   export let anchor: maplibregl.PositionAnchor | undefined = undefined;
@@ -273,6 +275,12 @@
     open = true;
     features = e.features ?? [];
     lngLat = e.lngLat;
+
+    if (canOpen && !canOpen(e.features ?? [])) {
+      // Explicitly close, because we might've been open from an adjacent matching feature
+      open = false;
+      return;
+    }
   }
 
   function globalClickHandler(e: MapMouseEvent) {
