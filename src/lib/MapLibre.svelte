@@ -351,6 +351,9 @@
   function onHashChange() {
     if (hash) {
       let parts = parseViewportHash(window.location.hash);
+      if (parts.some(isNaN)) {
+        return;
+      }
       if (parts.length >= 3) {
         zoom = parts[0];
         center = [parts[2], parts[1]];
